@@ -1,4 +1,6 @@
 OPTextView
 ==========
 
-UITextView subclass that supports a placeholder. Use anywhere you'd use a UITextView. Set `placeholder` text in IB using a custom property. Set placeholder color via the view's tint color.
+UITextView subclass that supports a placeholder. Use anywhere you'd use a UITextView.
+
+To set placeholder attributes in IB, use runtime attributes: `placeholder` (string) for the placeholder text, `placeholderColor` (color) for the color.
