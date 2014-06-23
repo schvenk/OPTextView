@@ -45,6 +45,12 @@
     }
 }
 
+- (void)layoutSubviews {
+    [super layoutSubviews];
+    if (_placeholderLabel) {
+        _placeholderLabel.preferredMaxLayoutWidth = self.frame.size.width - self.textContainerInset.left - self.textContainerInset.right - 2 * self.textContainer.lineFragmentPadding;
+    }
+}
 
 
 
@@ -80,19 +86,20 @@
         _placeholderLabel.backgroundColor = [UIColor clearColor];
         _placeholderLabel.textColor = self.placeholderColor;
         _placeholderLabel.alpha = 0;
-        [self addSubview:_placeholderLabel];
+        [self insertSubview:_placeholderLabel atIndex:0];
         
         NSDictionary* bindings = NSDictionaryOfVariableBindings(_placeholderLabel);
         NSDictionary* insetValues = @{@"leftInset": @(self.textContainerInset.left + self.textContainer.lineFragmentPadding),
                                       @"topInset": @(self.textContainerInset.top),
-                                      @"rightInset": @(self.textContainerInset.right + self.textContainer.lineFragmentPadding)};
+                                      @"rightInset": @(self.textContainerInset.right + self.textContainer.lineFragmentPadding),
+                                      @"bottomInset": @(self.textContainerInset.bottom)};
         NSArray* constraints = [NSLayoutConstraint constraintsWithVisualFormat:@"|-(leftInset)-[_placeholderLabel]-(rightInset)-|"
                                                                        options:0
                                                                        metrics:insetValues
                                                                          views:bindings];
         [self addConstraints:constraints];
         
-        constraints = [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(topInset)-[_placeholderLabel]"
+        constraints = [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(topInset)-[_placeholderLabel]-(bottomInset)-|"
                                                               options:0
                                                               metrics:insetValues
                                                                 views:bindings];
@@ -104,11 +111,18 @@
     return _placeholderLabel;
 }
 
+- (void)setPlaceholder:(NSString *)placeholder animated:(BOOL)animated {
+    if (animated) {
+        [UIView transitionWithView:self
+                          duration:0.3
+                           options:UIViewAnimationOptionTransitionCrossDissolve
+                        animations:^{ [self setPlaceholder:placeholder]; }
+                        completion:nil];
+    } else [self setPlaceholder:placeholder];
+}
 - (void)setPlaceholder:(NSString *)placeholder {
     self.placeholderLabel.text = placeholder;
-    [self.placeholderLabel sizeToFit];
-    [self sendSubviewToBack:self.placeholderLabel];
-
+    
     if (self.text.length == 0 && self.placeholder.length > 0) {
         self.placeholderLabel.alpha = 1;
     }

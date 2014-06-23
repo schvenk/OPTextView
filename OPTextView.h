@@ -16,4 +16,5 @@
 @property (nonatomic, retain) NSString *placeholder;
 @property (nonatomic, retain) UIColor *placeholderColor;
 
+- (void)setPlaceholder:(NSString *)placeholder animated:(BOOL)animated;
 @end
